@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>C++ 编译问题 - My Docs</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">My Docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href=".." class="nav-link">Welcome to MkDocs</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">C++ 编译问题</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href=".." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#pkg-config" class="nav-link">使用pkg-config查找必要的依赖包</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#add_subdirectorycmake_current_source_dir3rdmmdeployexample" class="nav-link">add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd/mmdeploy/example)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#libjiso" class="nav-link">编译libji.so</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#sampledetectorlibdarknetso-usrlocalev_sdklib" class="nav-link">安装SampleDetector所依赖的libdarknet.so, 请在此处将自己依赖的库安装到/usr/local/ev_sdk/lib下</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#install-libjiso" class="nav-link">Install libji.so</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-level="1"><a href="#-end-ev_sdk-dependencies-" class="nav-link">---  END EV_SDK DEPENDENCIES  ---</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<ul>
+<li>问题1</li>
+<li>
+<p><img alt="" src="../1.png" /></p>
+</li>
+<li>
+<p>第38行，由于属性不统一导致错误</p>
+</li>
+<li>
+<p>解释：</p>
+<p>Cmake中，用target_include_directories,target_link_libraries时，模式要一致。要么都加上PUBLIC/PRIVATE的属性。要么都不加加上是cmake比较推荐的,mmdeploy中都是加了的.</p>
+</li>
+<li>
+<p>极视的 cmakelistfile.txt 示例：
+    ```
+    #sdk 4.0
+    cmake_minimum_required(VERSION 3.5)
+    project(ji)</p>
+<p>set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_INSTALL_PREFIX "/usr/local/ev_sdk")
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+set(MMDeploy_DIR /project/ev_sdk/3rd/mmdeploy/lib/cmake/MMDeploy)</p>
+<h1 id="pkg-config">使用pkg-config查找必要的依赖包</h1>
+<p>find_package(OpenCV REQUIRED)
+find_library(glog REQUIRED)
+find_package(MMDeploy REQUIRED)
+set(ENV{PKG_CONFIG_PATH} "ENV{PKG_CONFIG_PATH}")
+find_package(PkgConfig REQUIRED)</p>
+<p>add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd/cJSON)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd/wkt_parser)</p>
+<h1 id="add_subdirectorycmake_current_source_dir3rdmmdeployexample">add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rd/mmdeploy/example)</h1>
+<p>set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:/usr/local/ev_sdk/lib")</p>
+<h1 id="libjiso">编译libji.so</h1>
+<p>list(APPEND libji_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/ji.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/SampleDetector.cpp)
+add_library (${PROJECT_NAME} SHARED ${libji_SOURCES})
+target_include_directories(${PROJECT_NAME}<br />
+        PUBLIC ${OpenCV_INCLUDE_DIR}
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+        PUBLIC "/usr/local/ev_sdk/3rd/darknet/include")
+target_link_libraries(${PROJECT_NAME}
+        ${OpenCV_LIBS}
+        glog
+        cjson
+        WKTParser
+        "/usr/local/ev_sdk/3rd/darknet/lib/libdarknet.so"
+        )
+mmdeploy_load_static(${PROJECT_NAME} MMDeployStaticModules)
+mmdeploy_load_dynamic(${PROJECT_NAME} MMDeployDynamicModules)
+target_link_libraries(${PROJECT_NAME} MMDeployLibs ${OpenCV_LIBS})</p>
+<h1 id="sampledetectorlibdarknetso-usrlocalev_sdklib">安装SampleDetector所依赖的libdarknet.so, 请在此处将自己依赖的库安装到/usr/local/ev_sdk/lib下</h1>
+<p>install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/3rd/darknet/lib/libdarknet.so DESTINATION lib)</p>
+<h1 id="install-libjiso">Install libji.so</h1>
+<p>install(TARGETS ${PROJECT_NAME} DESTINATION lib)</p>
+<h1 id="-end-ev_sdk-dependencies-">---  END EV_SDK DEPENDENCIES  ---</h1>
+<p>```</p>
+</li>
+<li>
+<p>问题2： 
+ 当出现找不到某个.so文件的解决方法：
+    <code>find / -name '*.so ' 去找一下这个文件是否存在，如果存在但是显示找不到，则设置**library_path**环境  变量</code></p>
+</li>
+<li>编译的一般流程：
+    <code>mkdir build &amp;&amp; cd build 
+        cmake .. (这边指的是外部要有camke*.txt) 相当与link的操作，去寻找所需要的所有依赖
+        make install</code></li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
